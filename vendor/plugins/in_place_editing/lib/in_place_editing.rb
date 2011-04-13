@@ -15,13 +15,32 @@ module InPlaceEditing
   #
   module ClassMethods
     def in_place_edit_for(object, attribute, options = {})
+      options = {
+                  :object_getter => nil,
+                  :object_finder => :find,
+                  :object_finder_param => :id,
+                  :attribute_formatter => :to_s,
+                  :object_attribute_formatter => nil,
+                  :helper_formatter => nil
+                }.merge!(options)
       define_method("set_#{object}_#{attribute}") do
-        unless [:post, :put].include?(request.method) then
-          return render(:text => 'Method not allowed', :status => 405)
+        @item = if options[:object_getter]
+          self.send(options[:object_getter])
+          self.instance_variable_get("@#{object.to_s}}")
+        else
+          object.to_s.camelize.constantize.send(options[:object_finder], params[options[:object_finder_param]])
         end
-        @item = object.to_s.camelize.constantize.find(params[:id])
-        @item.update_attribute(attribute, params[:value])
-        render :text => CGI::escapeHTML(@item.send(attribute).to_s)
+        @item.update_attributes(attribute => params[:value])
+        @item.reload
+        text = if options[:object_attribute_formatter]
+          @item.send(options[:object_attribute_formatter])
+        elsif options[:attribute_formatter]
+          @item.send(attribute).send(options[:attribute_formatter])
+        else
+          @item.send(attribute)
+        end
+        text = @template.send(options[:helper_formatter], text) if options[:helper_formatter]
+        render :text => (text).html_safe
       end
     end
   end

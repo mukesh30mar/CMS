@@ -54,12 +54,16 @@ module InPlaceMacrosHelper
     js_options['cols'] = options[:cols] if options[:cols]
     js_options['size'] = options[:size] if options[:size]
     js_options['externalControl'] = "'#{options[:external_control]}'" if options[:external_control]
+    js_options['externalControlOnly'] = "'#{options[:external_control_only]}'" if options[:external_control_only]
+    js_options['submitOnBlur'] = "'#{options[:submit_on_blur]}'" if options[:submit_on_blur]
     js_options['loadTextURL'] = "'#{url_for(options[:load_text_url])}'" if options[:load_text_url]        
     js_options['ajaxOptions'] = options[:options] if options[:options]
     js_options['htmlResponse'] = !options[:script] if options[:script]
     js_options['callback']   = "function(form) { return #{options[:with]} }" if options[:with]
     js_options['clickToEditText'] = %('#{options[:click_to_edit_text]}') if options[:click_to_edit_text]
     js_options['textBetweenControls'] = %('#{options[:text_between_controls]}') if options[:text_between_controls]
+    js_options['onComplete'] = %('#{options[:on_complete]}') if options[:on_complete]
+    js_options['onFailure'] = %('#{options[:on_failure]}') if options[:on_failure]
     function << (', ' + options_for_javascript(js_options)) unless js_options.empty?
     
     function << ')'
@@ -69,12 +73,57 @@ module InPlaceMacrosHelper
   
   # Renders the value of the specified object and method with in-place editing capabilities.
   def in_place_editor_field(object, method, tag_options = {}, in_place_editor_options = {})
-    instance_tag = ::ActionView::Helpers::InstanceTag.new(object, method, self)
-    tag_options = {:tag => "span",
-                   :id => "#{object}_#{method}_#{instance_tag.object.id}_in_place_editor",
-                   :class => "in_place_editor_field"}.merge!(tag_options)
-    in_place_editor_options[:url] = in_place_editor_options[:url] || url_for({ :action => "set_#{object}_#{method}", :id => instance_tag.object.id })
-    tag = content_tag(tag_options.delete(:tag), h(instance_tag.value(instance_tag.object)),tag_options)
-    return tag + in_place_editor(tag_options[:id], in_place_editor_options)
+    tag = ::ActionView::Helpers::InstanceTag.new(object, method, self)
+    tag_options = {:tag => "span", :id => "#{object}_#{method}_#{tag.object.id}_in_place_editor", :class => "in_place_editor_field"}.merge!(tag_options)
+    in_place_editor_options[:url] = in_place_editor_options[:url] || url_for({ :action => "set_#{object}_#{method}", :id => tag.object.id })
+    if helper_formatter = in_place_editor_options.delete(:helper_formatter)
+      # in_place_editor_options[:load_text_url] ||= { :controller => object.pluralize, :action => 'show', :id => tag.object.id, :attribute => method.to_s } 
+      item = @template.instance_variable_get("@#{object}")
+      value = item.send(method)
+      content = content_tag(tag_options.delete(:tag), @template.send( helper_formatter, value), tag_options)
+    else
+      content = tag.to_content_tag(tag_options.delete(:tag), tag_options)
+    end
+    content + in_place_editor(tag_options[:id], in_place_editor_options)
+  end
+  
+  
+  
+  
+  # collection version
+  def in_place_collection_editor_field(object,method,container, tag_options={}, in_place_editor_options = {})   
+      tag = ::ActionView::Helpers::InstanceTag.new(object, method, self)
+      tag_options = { :tag => "span",
+        :id => "#{object}_#{method}_#{tag.object.id}_in_place_editor",
+        :class => "in_place_editor_field" }.merge!(tag_options)
+      url = url_for( :action => "set_#{object}_#{method}", :id => tag.object.id )
+      if protect_against_forgery?
+        in_place_editor_options[:with] ||= "Form.serialize(form)"
+        in_place_editor_options[:with] += " + '&authenticity_token=' + encodeURIComponent('#{form_authenticity_token}')"
+      end
+      collection = container.inject([]) do |options, element|
+        options << "[ '#{escape_javascript(element.last.to_s)}', '#{escape_javascript(element.first.to_s)}']" 
+      end
+      function =  "new Ajax.InPlaceCollectionEditor("
+      function << "'#{object}_#{method}_#{tag.object.id}_in_place_editor',"
+      function << "'#{url}',"
+      function << "{collection: [#{collection.join(',')}], id: '#{object}_#{method}'"
+      function << ", callback: function(form) { return #{in_place_editor_options[:with]} }" if in_place_editor_options[:with]
+      function << ", value: '#{in_place_editor_options[:value]}'" if in_place_editor_options[:value]
+      function << ", externalControl: '#{in_place_editor_options[:external_control]}'" if in_place_editor_options[:external_control]
+      function << ", externalControlOnly: '#{in_place_editor_options[:external_control_only]}'" if in_place_editor_options[:external_control_only]
+      function << "});"  
+      if helper_formatter = in_place_editor_options.delete(:helper_formatter)
+        item = @template.instance_variable_get("@#{object}")
+        value = item.send(method)
+        content = content_tag(tag_options.delete(:tag), @template.send( helper_formatter, value), tag_options)
+      elsif object_attribute_formatter = in_place_editor_options.delete(:object_attribute_formatter)
+        item = @template.instance_variable_get("@#{object}")
+        value = item.send(object_attribute_formatter)
+        content = content_tag(tag_options.delete(:tag), value, tag_options)
+      else
+        content = tag.to_content_tag(tag_options.delete(:tag), tag_options)
+      end
+      content + javascript_tag(function)
   end
 end

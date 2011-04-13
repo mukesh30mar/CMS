@@ -1,6 +1,6 @@
  require 'authenticated_system.rb'
  require 'acts_as_textiled.rb'
- require  'in_place_editing.rb'
+ require  'rubygems'
   class ApplicationController < ActionController::Base
   protect_from_forgery
 

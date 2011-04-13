@@ -1,6 +1,6 @@
 Learningrails9::Application.routes.draw do 
   resources :users
-  resources :viewer
+  resources :viewer, :member => {:set_page_body => :post}
 
   resource :session, :only => [:new, :create, :destroy]
 
