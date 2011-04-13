@@ -27,6 +27,23 @@
     <%= f.label :Admin %><br />
     <%= f.check_box :admin %>
   </div>
+
+ <div class="field">
+    <%= f.label :ParentPage %><br />
+   <%= f.collection_select :parent_id, Page.find(:all), :id, :title, :include_blank => true %>
+  </div>
+
+<div class="field">
+    <%= f.label :Position %><br />
+  <%= f.text_field :position, :size => '3' %>
+  </div>	
+
+<div class="field">
+    <%= f.label :NavLabel %><br />
+   	<%= f.text_field :navlabel %>
+
+  </div>
+
   <div class="actions">
     <%= f.submit %>
   </div>

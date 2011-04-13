@@ -2,10 +2,10 @@ class PagesController < ApplicationController
   # GET /pages
   # GET /pages.xml
   
-  before_filter :loadmetadata
+    before_filter :set_pagetitle
     before_filter :login_required
   
-  def loadmetadata
+  def set_pagetitle
   @pagetitle="My Administrator"
   end
   
@@ -56,6 +56,7 @@ class PagesController < ApplicationController
         format.html { redirect_to(@page, :notice => 'Page was successfully created.') }
         format.xml  { render :xml => @page, :status => :created, :location => @page }
       else
+       
         format.html { render :action => "new" }
         format.xml  { render :xml => @page.errors, :status => :unprocessable_entity }
       end

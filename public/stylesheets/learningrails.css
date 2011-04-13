@@ -75,3 +75,33 @@ body {
     background-color: #333;
     color: #fff;
 }
+#navbar #current a{
+	background-color: #000;
+}
+#subnav {
+	width: 160px;
+	float: left;
+	margin: 0 20px 50px -10px;
+}
+#subnav ul {
+    list-style: none;
+    font-weight: bold;
+    font-size: 13px;
+	margin: 0;
+	padding: 0;
+}
+#subnav ul li {
+	background-color: #999;
+	border-bottom: 1px solid #333;
+	border-top: 1px solid #333;
+}
+#subnav ul li a {
+	padding: 5px 10px;
+	display:block;
+	color:white;
+	text-decoration: none;
+}
+#subnav ul li a:hover {
+    background-color: #333;
+    color: #fff;
+}

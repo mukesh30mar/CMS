@@ -20,6 +20,7 @@ class SessionsController < ApplicationController
       handle_remember_cookie! new_cookie_flag
       redirect_back_or_default('/', :notice => "Logged in successfully")
     else
+      @pagetitle="Your Login was not sucessfull"
       note_failed_signin
       @login       = params[:login]
       @remember_me = params[:remember_me]

@@ -10,9 +10,11 @@
 
   def get_pages_for_tabs
       if logged_in?
-      @tabs=Page.find(:all)
+   #   @tabs=Page.find(:all)
+      @tabs=Page.find_main
      else
-       @tabs=Page.find(:all,:conditions=> ["admin !=?", true])
+       #@tabs=Page.find(:all,:conditions=> ["admin !=?", true])
+       @tabs=Page.find_main_public
      end
    end
 end

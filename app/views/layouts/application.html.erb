@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= @pagetitle || (@page && @page.title) || "Learning Rails" %></title>
+  <title>
+   
+     <%= @pagetitle %>
+</title>
  <%= stylesheet_link_tag 'learningrails' %>
   <%= javascript_include_tag :defaults %>
   <%= csrf_meta_tag %>
@@ -19,7 +22,8 @@
 	 <ul>
 		
 		<% @tabs.each do |page| -%>
-		 <li> <%= link_to page.title, view_page_path(page.name) %></li>
+		 <!-- <li> <%= link_to page.title, view_page_path(page.name) %></li> -->
+		<li <%="id='current'" if @page && (@page == page || @page.parent ==page) %>> <%= link_to page.title, view_page_path(page.name) %></li>
 	 	<% end -%>
 		
 	<li><% if logged_in?%>

@@ -1,3 +1,20 @@
+<% if !@subpages.empty? %>
+  <div id='subnav'>
+    <ul>
+      <% for page in @subpages %>
+        <li><%= link_to page.navlabel, view_page_path(page.name) %></li>
+      <% end %>
+  </div>
+<% elsif @page.parent %>
+  <div id='subnav'>
+    <ul>
+      <li><%= link_to "Return to #{@page.parent.title}",
+              view_page_path(@page.parent.name) %>
+      </li>
+    </ul>
+  </div>
+<% end %>
+
 <% if logged_in? %>
 <a href = '#' id = 'edit'>Edit This Page</a>
 

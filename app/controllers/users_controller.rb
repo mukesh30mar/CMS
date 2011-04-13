@@ -2,9 +2,12 @@
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
    before_filter :login_required
-
+   before_filter :set_pagetitle
+   
   # render new.rhtml
-  
+  def set_pagetitle
+  @pagetitle= 'User Administration'
+  end
   def index
   
   @users=User.find(:all)
@@ -53,6 +56,7 @@
       self.current_user = @user # !! now logged in
       redirect_back_or_default('/', :notice => "Thanks for signing up!  We're sending you an email with your activation code.")
     else
+       
       flash.now[:error]  = "We couldn't set up that account, sorry.  Please try again, or contact an admin (link is above)."
       render :action => 'new'
     end

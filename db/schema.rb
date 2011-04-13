@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110411053222) do
+ActiveRecord::Schema.define(:version => 20110413073734) do
 
   create_table "pages", :force => true do |t|
     t.string   "name"
@@ -19,6 +19,9 @@ ActiveRecord::Schema.define(:version => 20110411053222) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "admin"
+    t.integer  "parent_id"
+    t.string   "navlabel"
+    t.integer  "position"
   end
 
   create_table "users", :force => true do |t|
