@@ -43,6 +43,21 @@
    	<%= f.text_field :navlabel %>
 
   </div>
+<div class="field">
+    <%=f.label  :Redirect%>
+  <%= f.check_box :redirect %>
+</div
+
+<div class="field">
+  <%= f.label :Action %>
+
+  <%= f.text_field :action_name %>
+</div>
+
+<div class="field">
+    <%=f.label  :Controller%>
+  <%= f.text_field :controller_name %>
+</div>
 
   <div class="actions">
     <%= f.submit %>

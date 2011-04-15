@@ -1,4 +1,12 @@
 Learningrails9::Application.routes.draw do 
+  resources :messages
+
+  resources :categories
+
+  resources :links do
+  get 'list', :on => :collection
+  end
+
   resources :users
   resources :viewer, :member => {:set_page_body => :post}
 
@@ -89,4 +97,5 @@ Learningrails9::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   match ':controller(/:action(/:id(.:format)))'
+  match ':controller(/:action)'
 end
