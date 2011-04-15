@@ -15,16 +15,18 @@ Learningrails9::Application.configure do
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send
+  config.action_mailer.delivery_method =:smtp
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
   # e-mail configuration
    config.action_mailer.smtp_settings= {
-     :address => "localhost",
-     :port    =>  25,  
-     :domain  =>   "HELO",
-     :authentication => "mukesh.sumit20@gmail.com",    
-     :user_name => "mukesh",
-     :password => "secret", 
+     :address => "smtp.gmail.com",
+     :port    =>   587,
+     :domain  =>   "localhost@localdomain",
+     :authentication => "plain",    
+     :user_name => "uremail",
+     :password => "pwd", 
+     :enable_starttls_auto => true
      
    }
    
